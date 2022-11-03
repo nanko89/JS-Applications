@@ -23,7 +23,6 @@ async function createRecipeCard(dataForm) {
     .filter(l => l != "");
 
   const body = { name, img, ingredients, steps };
-  console.log(body);
 
   const token = sessionStorage.getItem("authToken");
   if (!token) {
