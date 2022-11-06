@@ -49,7 +49,7 @@ function attachEvents() {
   async function onDelete(e) {
     const id = e.target.parentElement.id;
 
-    fetch(url + `/${id}`, {
+    await fetch(url + `/${id}`, {
       method: "delete",
     });
     document.getElementById(id).remove();
