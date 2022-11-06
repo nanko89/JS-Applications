@@ -37,7 +37,7 @@ async function onLogin(email, password) {
   sessionStorage.setItem("id", data._id);
   sessionStorage.setItem("email", data.email);
   sessionStorage.setItem("accessToken", data.accessToken);
-  window.location = "./index.html";
+  window.location.href = "index.html";
 }
 
 function getHeader(method, body) {

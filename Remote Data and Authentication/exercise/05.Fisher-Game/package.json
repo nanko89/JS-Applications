@@ -1,5 +1,5 @@
 {
-  "name": "02.fishergame",
+  "name": "05.fishergame",
   "version": "1.0.0",
   "main": "index.html",
   "scripts": {
@@ -13,9 +13,9 @@
     "page": "^1.11.6"
   },
   "devDependencies": {
-    "http-server": "0.12.3",
-    "playwright-chromium": "1.9.2",
-    "mocha": "8.3.2",
-    "chai": "4.3.4"
+    "chai": "4.3.4",
+    "http-server": "^14.1.1",
+    "mocha": "^10.1.0",
+    "playwright-chromium": "1.9.2"
   }
 }

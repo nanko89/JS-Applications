@@ -1,7 +1,7 @@
-const { chromium } = require('playwright-chromium');
-const { expect } = require('chai');
+const { chromium } = require("playwright-chromium");
+const { expect } = require("chai");
 
-const host = 'http://localhost:3000'; // Application host (NOT service host - that can be anything)
+const host = "http://localhost:3000"; // Application host (NOT service host - that can be anything)
 
 const interval = 300;
 const DEBUG = false;
@@ -10,55 +10,55 @@ const slowMo = 500;
 const mockData = {
   users: [
     {
-      _id: '0001',
-      email: 'peter@abv.bg',
-      password: '123456',
-      accessToken: 'AAAA',
+      _id: "0001",
+      email: "peter@abv.bg",
+      password: "123456",
+      accessToken: "AAAA",
     },
     {
-      _id: '0002',
-      email: 'john@abv.bg',
-      password: '123456',
-      accessToken: 'BBBB',
+      _id: "0002",
+      email: "john@abv.bg",
+      password: "123456",
+      accessToken: "BBBB",
     },
   ],
   catalog: [
     {
-      angler: 'Paulo Admorim',
-      weight: '636',
-      species: 'Atlantic Blue Marlin',
-      location: 'Vitoria, Brazil',
-      bait: 'trolled pink',
-      captureTime: '80',
-      _id: '1001',
-      _ownerId: '0001',
+      angler: "Paulo Admorim",
+      weight: "636",
+      species: "Atlantic Blue Marlin",
+      location: "Vitoria, Brazil",
+      bait: "trolled pink",
+      captureTime: "80",
+      _id: "1001",
+      _ownerId: "0001",
     },
     {
-      angler: 'Paulo Admorim2',
+      angler: "Paulo Admorim2",
       weight: 636,
-      species: 'Atlantic Blue Marlin',
-      location: 'Vitoria, Brazil',
-      bait: 'trolled pink',
+      species: "Atlantic Blue Marlin",
+      location: "Vitoria, Brazil",
+      bait: "trolled pink",
       captureTime: 80,
-      _id: '1002',
-      _ownerId: '0002',
+      _id: "1002",
+      _ownerId: "0002",
     },
   ],
 };
 const endpoints = {
-  register: '/users/register',
-  login: '/users/login',
-  logout: '/users/logout',
-  catalog: '/data/catches',
-  create: '/data/catches ',
-  details: (id) => `/data/catches/${id}`,
+  register: "/users/register",
+  login: "/users/login",
+  logout: "/users/logout",
+  catalog: "/data/catches",
+  create: "/data/catches ",
+  details: id => `/data/catches/${id}`,
 };
 
 let browser;
 let context;
 let page;
 
-describe('E2E tests', function () {
+describe("E2E tests", function () {
   // Setup
   this.timeout(DEBUG ? 120000 : 7000);
   before(
@@ -78,41 +78,41 @@ describe('E2E tests', function () {
     await context.close();
   });
   // Test proper
-  describe('Authentication', () => {
-    it('register does not work with empty fields', async () => {
+  describe("Authentication", () => {
+    it("register does not work with empty fields", async () => {
       const { post } = await handle(endpoints.register);
       const isCalled = post().isHandled;
 
       await page.goto(host);
-      await page.waitForSelector('#register');
+      await page.waitForSelector("#register");
 
-      await page.click('nav >> text=Register');
-      await page.waitForSelector('#register-view');
+      await page.click("nav >> text=Register");
+      await page.waitForSelector("#register-view");
 
-      await page.click('#register >> text=Register');
+      await page.click("#register >> text=Register");
 
       expect(isCalled()).to.be.false;
     });
 
-    it('register makes correct API call', async () => {
+    it("register makes correct API call", async () => {
       const data = mockData.users[0];
       const { post } = await handle(endpoints.register);
       const { onRequest } = post(data);
 
       await page.goto(host);
-      await page.waitForSelector('#register');
+      await page.waitForSelector("#register");
 
-      await page.click('nav >> text=Register');
-      await page.waitForSelector('#register-view');
+      await page.click("nav >> text=Register");
+      await page.waitForSelector("#register-view");
 
-      await page.waitForSelector('#register');
+      await page.waitForSelector("#register");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
       await page.fill('[name="rePass"]', data.password);
 
       const [request] = await Promise.all([
         onRequest(),
-        page.click('form >> text=Register'),
+        page.click("form >> text=Register"),
       ]);
 
       const postData = JSON.parse(request.postData());
@@ -121,24 +121,24 @@ describe('E2E tests', function () {
       expect(postData.password).to.equal(data.password);
     });
 
-    it('login makes correct API call', async () => {
+    it("login makes correct API call", async () => {
       const data = mockData.users[0];
       const { post } = await handle(endpoints.login);
       const { onRequest } = post(data);
 
       await page.goto(host);
-      await page.waitForSelector('#login');
+      await page.waitForSelector("#login");
 
-      await page.click('nav >> text=Login');
-      await page.waitForSelector('#login-view');
+      await page.click("nav >> text=Login");
+      await page.waitForSelector("#login-view");
 
-      await page.waitForSelector('#login');
+      await page.waitForSelector("#login");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
 
       const [request] = await Promise.all([
         onRequest(),
-        page.click('form >> text=Login'),
+        page.click("form >> text=Login"),
       ]);
 
       const postData = JSON.parse(request.postData());
@@ -146,133 +146,133 @@ describe('E2E tests', function () {
       expect(postData.password).to.equal(data.password);
     });
 
-    it('logout makes correct API call', async () => {
+    it("logout makes correct API call", async () => {
       const data = mockData.users[0];
       const { post } = await handle(endpoints.login);
       const { get } = await handle(endpoints.logout);
       const { onResponse } = post(data);
-      const { onRequest } = get('', { json: false, status: 204 });
+      const { onRequest } = get("", { json: false, status: 204 });
 
       await page.goto(host);
-      await page.click('text=Login');
-      await page.waitForSelector('form');
+      await page.click("text=Login");
+      await page.waitForSelector("form");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
 
-      await Promise.all([onResponse(), page.click('form >> text=Login')]);
+      await Promise.all([onResponse(), page.click("form >> text=Login")]);
 
-      await page.waitForSelector('#logout');
+      await page.waitForSelector("#logout");
 
       const [request] = await Promise.all([
         onRequest(),
-        page.click('nav >> text=Logout'),
+        page.click("nav >> text=Logout"),
       ]);
 
-      const token = request.headers()['x-authorization'];
-      expect(request.method()).to.equal('GET');
+      const token = request.headers()["x-authorization"];
+      expect(request.method()).to.equal("GET");
       expect(token).to.equal(data.accessToken);
     });
   });
 
-  describe('Navigation bar', () => {
-    it('guest user should see correct navigation', async () => {
+  describe("Navigation bar", () => {
+    it("guest user should see correct navigation", async () => {
       await page.goto(host);
-      await page.waitForSelector('#guest');
+      await page.waitForSelector("#guest");
 
-      expect(await page.isVisible('#guest')).to.be.true;
+      expect(await page.isVisible("#guest")).to.be.true;
 
-      expect(await page.isVisible('#user')).to.be.false;
+      expect(await page.isVisible("#user")).to.be.false;
     });
 
-    it('logged user should see correct navigation', async () => {
+    it("logged user should see correct navigation", async () => {
       // Login user
       const data = mockData.users[0];
       await page.goto(host);
-      await page.waitForSelector('#login');
+      await page.waitForSelector("#login");
 
-      await page.click('nav >> text=Login');
-      await page.waitForSelector('#login-view');
+      await page.click("nav >> text=Login");
+      await page.waitForSelector("#login-view");
 
-      await page.waitForSelector('#login');
+      await page.waitForSelector("#login");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
 
-      page.click('form >> text=Login'), await page.waitForSelector('#user');
+      page.click("form >> text=Login"), await page.waitForSelector("#user");
 
       //Test for navigation
-      expect(await page.isVisible('#guest')).to.be.false;
+      expect(await page.isVisible("#guest")).to.be.false;
 
-      expect(await page.isVisible('#user')).to.be.true;
+      expect(await page.isVisible("#user")).to.be.true;
     });
   });
 
-  describe('Catalog', () => {
-    it('load catches', async () => {
+  describe("Catalog", () => {
+    it("load catches", async () => {
       const data = mockData.catalog;
       const { get } = await handle(endpoints.catalog);
       get(data);
       await page.goto(host);
 
-      await page.waitForSelector('.load');
+      await page.waitForSelector(".load");
 
-      await page.click('text=Load');
+      await page.click("text=Load");
 
-      await page.waitForSelector('#main');
-      const titles = await page.$$eval('#catches .catch', (t) =>
-        t.map((s) => s.textContent)
+      await page.waitForSelector("#main");
+      const titles = await page.$$eval("#catches .catch", t =>
+        t.map(s => s.textContent)
       );
 
       expect(titles.length).to.be.equal(data.length);
     });
 
-    it('before load catches', async () => {
+    it("before load catches", async () => {
       const data = mockData.catalog;
       const { get } = await handle(endpoints.catalog);
       get(data);
       await page.goto(host);
 
-      await page.waitForSelector('#main');
-      const titles = await page.$$eval('#catches .catch', (t) =>
-        t.map((s) => s.textContent)
+      await page.waitForSelector("#main");
+      const titles = await page.$$eval("#catches .catch", t =>
+        t.map(s => s.textContent)
       );
 
       expect(titles.length).to.be.equal(0);
     });
   });
 
-  describe('CRUD', () => {
+  describe("CRUD", () => {
     // Login user
     const loginUser = async () => {
       const data = mockData.users[0];
       await page.goto(host);
       await page.waitForTimeout(interval);
-      await page.click('text=Login');
+      await page.click("text=Login");
       await page.waitForTimeout(interval);
-      await page.waitForSelector('#login');
+      await page.waitForSelector("#login");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
-      await page.click('form >> text=Login');
+      await page.click("form >> text=Login");
       await page.waitForTimeout(interval);
     };
 
-    it('create does NOT work with empty fields', async () => {
+    it("create does NOT work with empty fields", async () => {
       await loginUser();
       const { post } = await handle(endpoints.create);
       const isCalled = post().isHandled;
 
-      await page.waitForSelector('#addForm');
-      page.click('form >> text=Add');
+      await page.waitForSelector("#addForm");
+      page.click("form >> text=Add");
 
       expect(isCalled()).to.be.false;
     });
 
-    it('create makes correct API call for logged in user', async () => {
+    it("create makes correct API call for logged in user", async () => {
       await loginUser();
       const data = mockData.catalog[0];
       const { post } = await handle(endpoints.catalog);
       const { onRequest } = post();
 
-      await page.waitForSelector('#addForm');
+      await page.waitForSelector("#addForm");
       await page.fill('[name="angler"]', data.angler);
       await page.fill('[name="weight"]', data.weight);
       await page.fill('[name="species"]', data.species);
@@ -282,7 +282,7 @@ describe('E2E tests', function () {
 
       const [request] = await Promise.all([
         onRequest(),
-        page.click('fieldset >> .add'),
+        page.click("fieldset >> .add"),
       ]);
 
       const postData = JSON.parse(request.postData());
@@ -301,11 +301,11 @@ describe('E2E tests', function () {
       const { get } = await handle(endpoints.catalog);
       get(data);
 
-      await page.click('.load');
-      const titles = await page.$$eval(`#catches .catch >> button`, (t) =>
-        t.map((s) => s.disabled)
+      await page.click(".load");
+      const titles = await page.$$eval(`#catches .catch >> button`, t =>
+        t.map(s => s.disabled)
       );
-      const result = titles.filter((x) => {
+      const result = titles.filter(x => {
         if (x !== false) {
           return true;
         }
@@ -314,17 +314,17 @@ describe('E2E tests', function () {
       expect(result.length).to.be.equals(2);
     });
 
-    it('author can click on other post', async () => {
+    it("author can click on other post", async () => {
       await loginUser();
       const data = mockData.catalog[0];
       const { get } = await handle(endpoints.catalog);
       get(data);
 
-      await page.click('.load');
-      const titles = await page.$$eval(`#catches .catch >> button`, (t) =>
-        t.map((s) => s.disabled)
+      await page.click(".load");
+      const titles = await page.$$eval(`#catches .catch >> button`, t =>
+        t.map(s => s.disabled)
       );
-      const result = titles.filter((x) => {
+      const result = titles.filter(x => {
         if (x !== true) {
           return true;
         }
@@ -333,36 +333,36 @@ describe('E2E tests', function () {
       expect(result.length).to.be.equals(2);
     });
 
-    it('edit makes correct API call for logged in user', async () => {
+    it("edit makes correct API call for logged in user", async () => {
       await loginUser();
       const data = mockData.catalog[0];
       await page.goto(host);
       const { get, put } = await handle(endpoints.details(data._id));
       get(data);
       const { onRequest } = put();
-      await page.waitForSelector('.load');
+      await page.waitForSelector(".load");
 
-      await page.click('.load');
+      await page.click(".load");
 
-      await page.waitForSelector('#catches');
-      await page.fill('.catch input[class="angler"]', data.angler + 'edit');
-      await page.waitForSelector('.update');
+      await page.waitForSelector("#catches");
+      await page.fill('.catch input[class="angler"]', data.angler + "edit");
+      await page.waitForSelector(".update");
 
-      const [request] = await Promise.all([onRequest(), page.click('.update')]);
+      const [request] = await Promise.all([onRequest(), page.click(".update")]);
 
       const postData = JSON.parse(request.postData());
       expect(postData.angler).to.contains(data.angler);
     });
 
-    it('delete makes correct API call for logged in user', async () => {
+    it("delete makes correct API call for logged in user", async () => {
       await loginUser();
       const data = mockData.catalog[0];
       await page.goto(host);
       const { del } = await handle(endpoints.details(data._id));
       const { onResponse, isHandled } = del({ id: data._id });
 
-      await page.click('.load');
-      await page.waitForSelector('.delete');
+      await page.click(".load");
+      await page.waitForSelector(".delete");
 
       await Promise.all([onResponse(), page.click('text="Delete"')]);
 
@@ -376,27 +376,27 @@ async function setupContext(context) {
   await handleContext(context, endpoints.login, { post: mockData.users[0] });
   await handleContext(context, endpoints.register, { post: mockData.users[0] });
   await handleContext(context, endpoints.logout, {
-    get: (h) => h('', { json: false, status: 204 }),
+    get: h => h("", { json: false, status: 204 }),
   });
 
   // Catalog and Details
   await handleContext(context, endpoints.catalog, { get: mockData.catalog });
-  await handleContext(context, endpoints.details('1001'), {
+  await handleContext(context, endpoints.details("1001"), {
     get: mockData.catalog[0],
   });
-  await handleContext(context, endpoints.details('1002'), {
+  await handleContext(context, endpoints.details("1002"), {
     get: mockData.catalog[1],
   });
-  await handleContext(context, endpoints.details('1003'), {
+  await handleContext(context, endpoints.details("1003"), {
     get: mockData.catalog[2],
   });
 
   // Block external calls
   await context.route(
-    (url) => url.href.slice(0, host.length) != host,
-    (route) => {
+    url => url.href.slice(0, host.length) != host,
+    route => {
       if (DEBUG) {
-        console.log('Preventing external call to ' + route.request().url());
+        console.log("Preventing external call to " + route.request().url());
       }
       route.abort();
     }
@@ -414,19 +414,19 @@ function handleContext(context, match, handlers) {
 async function handleRaw(match, handlers) {
   const methodHandlers = {};
   const result = {
-    get: (returns, options) => request('GET', returns, options),
-    post: (returns, options) => request('POST', returns, options),
-    put: (returns, options) => request('PUT', returns, options),
-    patch: (returns, options) => request('PATCH', returns, options),
-    del: (returns, options) => request('DELETE', returns, options),
-    delete: (returns, options) => request('DELETE', returns, options),
+    get: (returns, options) => request("GET", returns, options),
+    post: (returns, options) => request("POST", returns, options),
+    put: (returns, options) => request("PUT", returns, options),
+    patch: (returns, options) => request("PATCH", returns, options),
+    del: (returns, options) => request("DELETE", returns, options),
+    delete: (returns, options) => request("DELETE", returns, options),
   };
 
   const context = this;
 
   await context.route(urlPredicate, (route, request) => {
     if (DEBUG) {
-      console.log('>>>', request.method(), request.url());
+      console.log(">>>", request.method(), request.url());
     }
 
     const handler = methodHandlers[request.method().toLowerCase()];
@@ -439,7 +439,7 @@ async function handleRaw(match, handlers) {
 
   if (handlers) {
     for (let method in handlers) {
-      if (typeof handlers[method] == 'function') {
+      if (typeof handlers[method] == "function") {
         handlers[method](result[method]);
       } else {
         result[method](handlers[method]);
@@ -483,10 +483,10 @@ function respond(data, options = {}) {
   );
 
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    "Access-Control-Allow-Origin": "*",
   };
   if (options.json) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
     data = JSON.stringify(data);
   }
 

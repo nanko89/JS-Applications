@@ -30,7 +30,7 @@ function registerHandler(e) {
 
   // const {email,password,rePass} = Object.fromEntries(formData);
 
-  if (password !== repass) {
+  if (password !== repass || !email || !password || !repass) {
     errorP.textContent = "Error";
     setTimeout(() => {
       errorP.textContent = "";
@@ -47,24 +47,21 @@ async function onRegister(email, password) {
 
   try {
     const response = await fetch(url, header);
-    if (!response.ok) {
-      throw new Error("Error");
-    }
-    const data = response.json();
-    if (data.code !== 200) {
-      throw new Error("Error");
-    }
 
-    sessionStorage.setItem("id", data._id);
-    sessionStorage.setItem("email", data.email);
-    sessionStorage.setItem("accessToken", data.accessToken);
-    window.location = "./index.html";
+    const data = response.json();
+    if (response.status == 409) {
+      throw new Error("Email already exist");
+    }
+    if (response.ok) {
+      sessionStorage.setItem("id", data._id);
+      sessionStorage.setItem("email", data.email);
+      sessionStorage.setItem("accessToken", data.accessToken);
+      window.location = "./index.html";
+    } else {
+      throw new Error(data.message);
+    }
   } catch (err) {
-    errorP.textContent = "Error ";
-    setTimeout(() => {
-      errorP.textContent = "";
-    }, 2000);
-    return;
+    errorP.textContent = err.message;
   }
 }
 
