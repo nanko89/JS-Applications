@@ -68,3 +68,10 @@ a.active {
 #views {
     display: none;
 }
+
+.home, 
+.create, 
+.login, 
+.register{
+    display: none;
+}
