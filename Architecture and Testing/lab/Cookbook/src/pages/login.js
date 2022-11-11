@@ -1,30 +1,22 @@
-import { updateAuth } from '../auth.js';
+import { updateAuth } from "../auth.js";
+import { createLogin, saveUser } from "../api.js";
 
-const loginSection = document.querySelector('.login');
-const loginForm = loginSection.querySelector('form');
+const loginSection = document.querySelector(".login");
+const loginForm = loginSection.querySelector("form");
 
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+loginForm.addEventListener("submit", e => {
+  e.preventDefault();
 
-    let formData = new FormData(e.currentTarget);
-    let email = formData.get('email');
-    let password = formData.get('password');
-
-    fetch('http://localhost:3030/users/login', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify({email, password})
-    })
-        .then(res => res.json())
-        .then(user => {
-            localStorage.setItem('user', JSON.stringify(user));
-            updateAuth();
-            alert('successfuly logged in');
-        });
+  let formData = new FormData(e.currentTarget);
+  let email = formData.get("email");
+  let password = formData.get("password");
+  createLogin({ email, password }).then(user => {
+    saveUser(user);
+    updateAuth();
+    alert("successfuly logged in");
+  });
 });
 
 export function renderLogin() {
-    loginSection.style.display = 'block';
+  loginSection.style.display = "block";
 }
