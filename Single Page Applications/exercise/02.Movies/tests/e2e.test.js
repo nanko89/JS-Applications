@@ -1,7 +1,8 @@
-const { chromium } = require('playwright-chromium');
-const { expect } = require('chai');
+const { chromium } = require("playwright-chromium");
+const { expect } = require("chai");
 
-const host = 'http://localhost:3000'; // Application host (NOT service host - that can be anything)
+const host =
+  "http://127.0.0.1:5500/Single%20Page%20Applications/exercise/02.Movies/index.html"; // Application host (NOT service host - that can be anything)
 
 const interval = 300;
 const DEBUG = false;
@@ -10,76 +11,76 @@ const slowMo = 500;
 const mockData = {
   users: [
     {
-      _id: '0001',
-      email: 'peter@abv.bg',
-      password: '123456',
-      accessToken: 'AAAA',
+      _id: "0001",
+      email: "peter@abv.bg",
+      password: "123456",
+      accessToken: "AAAA",
     },
     {
-      _id: '0002',
-      email: 'john@abv.bg',
-      password: '123456',
-      accessToken: 'BBBB',
+      _id: "0002",
+      email: "john@abv.bg",
+      password: "123456",
+      accessToken: "BBBB",
     },
   ],
   catalog: [
     {
-      _id: '1001',
-      _ownerId: '0002',
-      title: 'Black Widow',
+      _id: "1001",
+      _ownerId: "0002",
+      title: "Black Widow",
       description:
-        'Natasha Romanoff aka Black Widow confronts the darker parts of her ledger when a dangerous conspiracy with ties to her past arises. Comes on the screens 2020.',
-      img: './images/movie1.jpeg',
+        "Natasha Romanoff aka Black Widow confronts the darker parts of her ledger when a dangerous conspiracy with ties to her past arises. Comes on the screens 2020.",
+      img: "./images/movie1.jpeg",
     },
     {
-      _id: '1002',
-      _ownerId: '0002',
-      title: 'Wonder Woman 1984',
+      _id: "1002",
+      _ownerId: "0002",
+      title: "Wonder Woman 1984",
       description:
-        'Diana must contend with a work colleague and businessman, whose desire for extreme wealth sends the world down a path of destruction, after an ancient artifact that grants wishes goes missing.',
-      img: './images/movie2.jpg',
+        "Diana must contend with a work colleague and businessman, whose desire for extreme wealth sends the world down a path of destruction, after an ancient artifact that grants wishes goes missing.",
+      img: "./images/movie2.jpg",
     },
     {
-      _id: '1003',
-      _ownerId: '0001',
-      title: 'Top Gun 2',
+      _id: "1003",
+      _ownerId: "0001",
+      title: "Top Gun 2",
       description:
         "After more than thirty years of service as one of the Navy's top aviators, Pete Mitchell is where he belongs, pushing the envelope as a courageous test pilot and dodging the advancement in rank that would ground him.",
-      img: './images/movie3.jpg',
+      img: "./images/movie3.jpg",
     },
   ],
   likes: [
     {
-      _ownerId: '0001',
-      movieId: '1002',
-      _id: 'e2d43547-5f76-451c-93df-14a83cb042e7',
+      _ownerId: "0001",
+      movieId: "1002",
+      _id: "e2d43547-5f76-451c-93df-14a83cb042e7",
     },
     {
-      _ownerId: '0001',
-      movieId: '1001',
-      _id: '9d709077-9bbb-417a-988e-87a0677b73d2',
+      _ownerId: "0001",
+      movieId: "1001",
+      _id: "9d709077-9bbb-417a-988e-87a0677b73d2",
     },
     {
-      _ownerId: '0002',
-      movieId: '1003',
-      _id: '16fb2a96-29bd-46b0-82b6-125a962b03ef',
+      _ownerId: "0002",
+      movieId: "1003",
+      _id: "16fb2a96-29bd-46b0-82b6-125a962b03ef",
     },
   ],
 };
 
 const endpoints = {
-  register: '/users/register',
-  login: '/users/login',
-  logout: '/users/logout',
-  catalog: '/data/movies',
-  create: '/data/movies',
-  like: '/data/likes',
-  edit: (id) => `/data/movies/${id}`,
-  delete: (id) => `/data/movies/${id}`,
-  details: (id) => `/data/movies/${id}`,
-  total: (likeId) =>
+  register: "/users/register",
+  login: "/users/login",
+  logout: "/users/logout",
+  catalog: "/data/movies",
+  create: "/data/movies",
+  like: "/data/likes",
+  edit: id => `/data/movies/${id}`,
+  delete: id => `/data/movies/${id}`,
+  details: id => `/data/movies/${id}`,
+  total: likeId =>
     `/data/likes?where=movieId%3D%22${likeId}%22&distinct=_ownerId&count`,
-  unlike: (likeId) => `/data/likes/${likeId}`,
+  unlike: likeId => `/data/likes/${likeId}`,
   own: (likeId, userId) =>
     `/data/likes?where=movieId%3D%22${likeId}%22%20and%20_ownerId%3D%22${userId}%22`,
 };
@@ -88,7 +89,7 @@ let browser;
 let context;
 let page;
 
-describe('E2E tests', function () {
+describe("E2E tests", function () {
   // Setup
   this.timeout(DEBUG ? 120000 : 7000);
   before(
@@ -108,34 +109,34 @@ describe('E2E tests', function () {
     await context.close();
   });
   // Test proper
-  describe('Authentication', () => {
-    it('register does not work with empty fields', async () => {
+  describe("Authentication", () => {
+    it("register does not work with empty fields", async () => {
       const { post } = await handle(endpoints.register);
       const isCalled = post().isHandled;
 
       await page.goto(host);
-      await page.waitForSelector('.navbar-nav');
+      await page.waitForSelector(".navbar-nav");
 
-      await page.click('nav >> text=Register');
-      await page.waitForSelector('#register-form');
+      await page.click("nav >> text=Register");
+      await page.waitForSelector("#register-form");
 
       // await page.click('[type="submit"]');
-      await page.click('#register-form >> text=Register');
+      await page.click("#register-form >> text=Register");
 
       expect(isCalled()).to.be.false;
     });
 
-    it('register makes correct API call', async () => {
+    it("register makes correct API call", async () => {
       const data = mockData.users[0];
       const { post } = await handle(endpoints.register);
       const { onRequest } = post(data);
 
       await page.goto(host);
-      await page.waitForSelector('.navbar-nav');
+      await page.waitForSelector(".navbar-nav");
 
-      await page.click('nav >> text=Register');
+      await page.click("nav >> text=Register");
 
-      await page.waitForSelector('#register-form');
+      await page.waitForSelector("#register-form");
       await page.fill('#register-form >> [name="email"]', data.email);
       await page.fill('#register-form >> [name="password"]', data.password);
       await page.fill(
@@ -146,7 +147,7 @@ describe('E2E tests', function () {
       const [request] = await Promise.all([
         onRequest(),
         // page.click('[type="submit"]'),
-        page.click('#register-form >> text=Register'),
+        page.click("#register-form >> text=Register"),
       ]);
 
       const postData = JSON.parse(request.postData());
@@ -155,24 +156,24 @@ describe('E2E tests', function () {
       expect(postData.password).to.equal(data.password);
     });
 
-    it('login makes correct API call', async () => {
+    it("login makes correct API call", async () => {
       const data = mockData.users[0];
       const { post } = await handle(endpoints.login);
       const { onRequest } = post(data);
 
       await page.goto(host);
-      await page.waitForSelector('.navbar-nav');
+      await page.waitForSelector(".navbar-nav");
 
-      await page.click('nav >> text=Login');
+      await page.click("nav >> text=Login");
 
-      await page.waitForSelector('#login-form');
+      await page.waitForSelector("#login-form");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
 
       const [request] = await Promise.all([
         onRequest(),
         // page.click('[type="submit"]'),
-        page.click('#login-form >> text=Login'),
+        page.click("#login-form >> text=Login"),
       ]);
 
       const postData = JSON.parse(request.postData());
@@ -181,46 +182,46 @@ describe('E2E tests', function () {
     });
   });
 
-  describe('Navigation bar', () => {
-    it('guest user should see correct navigation', async () => {
+  describe("Navigation bar", () => {
+    it("guest user should see correct navigation", async () => {
       await page.goto(host);
-      await page.waitForSelector('nav');
+      await page.waitForSelector("nav");
 
-      expect(await page.isVisible('nav >> text=Movies')).to.be.true;
-      expect(await page.isVisible('nav >> text=Login')).to.be.true;
-      expect(await page.isVisible('nav >> text=Register')).to.be.true;
+      expect(await page.isVisible("nav >> text=Movies")).to.be.true;
+      expect(await page.isVisible("nav >> text=Login")).to.be.true;
+      expect(await page.isVisible("nav >> text=Register")).to.be.true;
 
-      expect(await page.isVisible('nav >> text=Welcome')).to.be.false;
-      expect(await page.isVisible('nav >> text=Logout')).to.be.false;
+      expect(await page.isVisible("nav >> text=Welcome")).to.be.false;
+      expect(await page.isVisible("nav >> text=Logout")).to.be.false;
     });
 
-    it('logged user should see correct navigation', async () => {
+    it("logged user should see correct navigation", async () => {
       // Login user
       const data = mockData.users[0];
       await page.goto(host);
-      await page.waitForSelector('.navbar-nav');
+      await page.waitForSelector(".navbar-nav");
 
-      await page.click('nav >> text=Login');
+      await page.click("nav >> text=Login");
 
-      await page.waitForSelector('#login-form');
+      await page.waitForSelector("#login-form");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
 
-      page.click('form >> text=Login'), await page.waitForSelector('.user');
+      page.click("form >> text=Login"), await page.waitForSelector(".user");
 
       //Test for navigation
-      expect(await page.isVisible('nav >> text=Movies')).to.be.true;
+      expect(await page.isVisible("nav >> text=Movies")).to.be.true;
       expect(await page.isVisible(`nav >> text=Welcome, ${data.email}`)).to.be
         .true;
-      expect(await page.isVisible('nav >> text=Logout')).to.be.true;
+      expect(await page.isVisible("nav >> text=Logout")).to.be.true;
 
-      expect(await page.isVisible('nav >> text=Login')).to.be.false;
-      expect(await page.isVisible('nav >> text=Register')).to.be.false;
+      expect(await page.isVisible("nav >> text=Login")).to.be.false;
+      expect(await page.isVisible("nav >> text=Register")).to.be.false;
     });
   });
 
-  describe('Catalog', () => {
-    it('show details', async () => {
+  describe("Catalog", () => {
+    it("show details", async () => {
       const data = mockData.catalog[1];
       const user = mockData.users[0];
       const { get } = await handle(endpoints.details(data._id));
@@ -246,7 +247,7 @@ describe('E2E tests', function () {
         .true;
     });
 
-    it('guest does NOT see edit/delete buttons', async () => {
+    it("guest does NOT see edit/delete buttons", async () => {
       const data = mockData.catalog[1];
       const user = mockData.users[0];
       const { get } = await handle(endpoints.details(data._id));
@@ -257,11 +258,11 @@ describe('E2E tests', function () {
       const { get: total } = await handle(endpoints.total(data._id));
       own(0);
       total(5);
-      await page.waitForSelector('.navbar-brand');
+      await page.waitForSelector(".navbar-brand");
 
-      await page.click('nav >> text=Movies');
+      await page.click("nav >> text=Movies");
 
-      await page.waitForSelector('#movie');
+      await page.waitForSelector("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
@@ -271,43 +272,43 @@ describe('E2E tests', function () {
     });
   });
 
-  describe('CRUD', () => {
+  describe("CRUD", () => {
     // Login user
     const loginUser = async () => {
       const data = mockData.users[0];
       await page.goto(host);
       await page.waitForTimeout(interval);
-      await page.click('text=Login');
+      await page.click("text=Login");
       await page.waitForTimeout(interval);
-      await page.waitForSelector('#login-form');
+      await page.waitForSelector("#login-form");
       await page.fill('[name="email"]', data.email);
       await page.fill('[name="password"]', data.password);
-      await page.click('form >> text=Login');
+      await page.click("form >> text=Login");
       await page.waitForTimeout(interval);
     };
 
-    it('create does NOT work with empty fields', async () => {
+    it("create does NOT work with empty fields", async () => {
       await loginUser();
       const { post } = await handle(endpoints.create);
       const isCalled = post().isHandled;
 
-      await page.click('text=Add Movie');
+      await page.click("text=Add Movie");
 
-      await page.waitForSelector('#add-movie-form');
-      page.click('form >> text=Submit');
+      await page.waitForSelector("#add-movie-form");
+      page.click("form >> text=Submit");
 
       expect(isCalled()).to.be.false;
     });
 
-    it('create makes correct API call for logged in user', async () => {
+    it("create makes correct API call for logged in user", async () => {
       await loginUser();
       const data = mockData.catalog[0];
       const { post } = await handle(endpoints.create);
       const { onRequest } = post();
 
-      await page.click('text=Add Movie');
+      await page.click("text=Add Movie");
 
-      await page.waitForSelector('#add-movie-form');
+      await page.waitForSelector("#add-movie-form");
       await page.fill('#add-movie-form >> [name="title"]', data.title);
       await page.fill(
         '#add-movie-form >> [name="description"]',
@@ -317,7 +318,7 @@ describe('E2E tests', function () {
 
       const [request] = await Promise.all([
         onRequest(),
-        page.click('form >> text=Submit'),
+        page.click("form >> text=Submit"),
       ]);
 
       const postData = JSON.parse(request.postData());
@@ -326,7 +327,7 @@ describe('E2E tests', function () {
       expect(postData.img).to.equal(data.img);
     });
 
-    it('non-author does NOT see delete and edit buttons', async () => {
+    it("non-author does NOT see delete and edit buttons", async () => {
       await loginUser();
       const data = mockData.catalog[1];
       const user = mockData.users[0];
@@ -336,7 +337,7 @@ describe('E2E tests', function () {
       const { get: total } = await handle(endpoints.total(data._id));
       own(0);
       total(5);
-      await page.waitForSelector('#movie');
+      await page.waitForSelector("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
@@ -345,7 +346,7 @@ describe('E2E tests', function () {
       expect(await page.isVisible('text="Edit"')).to.be.false;
     });
 
-    it('author sees delete and edit buttons', async () => {
+    it("author sees delete and edit buttons", async () => {
       await loginUser();
       const data = mockData.catalog[2];
       const user = mockData.users[0];
@@ -356,18 +357,18 @@ describe('E2E tests', function () {
       const { get: total } = await handle(endpoints.total(data._id));
       own(0);
       total(5);
-      await page.waitForSelector('#movie');
+      await page.waitForSelector("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
 
-      await page.waitForSelector('a');
+      await page.waitForSelector("a");
 
       expect(await page.isVisible('text="Delete"')).to.be.true;
       expect(await page.isVisible('text="Edit"')).to.be.true;
     });
 
-    it('edit should populate form with correct data', async () => {
+    it("edit should populate form with correct data", async () => {
       await loginUser();
       const data = mockData.catalog[2];
       const user = mockData.users[0];
@@ -380,23 +381,23 @@ describe('E2E tests', function () {
       own(0);
       total(5);
 
-      await page.waitForSelector('#movie');
+      await page.waitForSelector("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
 
-      await page.click('text=Edit');
-      await page.waitForSelector('#edit-movie form');
+      await page.click("text=Edit");
+      await page.waitForSelector("#edit-movie form");
 
-      const inputs = await page.$$eval('#edit-movie input, textarea', (t) =>
-        t.map((i) => i.value)
+      const inputs = await page.$$eval("#edit-movie input, textarea", t =>
+        t.map(i => i.value)
       );
 
       expect(inputs[1]).to.equal(data.title);
       expect(inputs[2]).to.equal(data.description);
     });
 
-    it('delete makes correct API call for logged in user', async () => {
+    it("delete makes correct API call for logged in user", async () => {
       await loginUser();
       const data = mockData.catalog[2];
       const user = mockData.users[0];
@@ -409,7 +410,7 @@ describe('E2E tests', function () {
       own(0);
       total(5);
 
-      await page.waitForSelector('#movie');
+      await page.waitForSelector("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
@@ -419,8 +420,8 @@ describe('E2E tests', function () {
     });
   });
 
-  describe('Like functionality', async () => {
-    it('Like button is not visible for guest users', async () => {
+  describe("Like functionality", async () => {
+    it("Like button is not visible for guest users", async () => {
       const data = mockData.catalog[0];
       const user = mockData.users[0];
       await page.goto(host);
@@ -430,9 +431,9 @@ describe('E2E tests', function () {
       own(0);
       total(5);
 
-      await page.click('nav >> text=Movies');
+      await page.click("nav >> text=Movies");
 
-      await page.waitForSelector('#movie');
+      await page.waitForSelector("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
@@ -440,51 +441,51 @@ describe('E2E tests', function () {
       expect(await page.isVisible('text="Like"')).to.be.false;
     });
 
-    it('Like button is visible for the non-creator user', async () => {
+    it("Like button is visible for the non-creator user", async () => {
       // Login user
       const user = mockData.users[0];
       const data = mockData.catalog[2];
 
       await page.goto(host);
       await page.waitForTimeout(interval);
-      await page.click('text=Login');
+      await page.click("text=Login");
       await page.waitForTimeout(interval);
-      await page.waitForSelector('#login-form');
+      await page.waitForSelector("#login-form");
       await page.fill('[name="email"]', user.email);
       await page.fill('[name="password"]', user.password);
-      await page.click('form >> text=Login');
+      await page.click("form >> text=Login");
 
       const { get: own } = await handle(endpoints.own(data._id, user._id));
       const { get: total } = await handle(endpoints.total(data._id));
       own(0);
       total(5);
-      await page.waitForSelector('nav');
+      await page.waitForSelector("nav");
 
-      await page.click('nav >> text=Movies');
+      await page.click("nav >> text=Movies");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
-      await page.waitForSelector('.enrolled-span');
-      const likes = await page.$$eval('.enrolled-span', (t) =>
-        t.map((s) => s.textContent)
+      await page.waitForSelector(".enrolled-span");
+      const likes = await page.$$eval(".enrolled-span", t =>
+        t.map(s => s.textContent)
       );
       expect(await page.isVisible('.container >> text="Like"')).to.be.true;
-      expect(likes[0]).to.contains('Liked 5');
+      expect(likes[0]).to.contains("Liked 5");
     });
 
-    it('Like button is not visible for the creator', async () => {
+    it("Like button is not visible for the creator", async () => {
       // Login user
       const user = mockData.users[0];
       const data = mockData.catalog[2];
 
       await page.goto(host);
       await page.waitForTimeout(interval);
-      await page.click('text=Login');
+      await page.click("text=Login");
       await page.waitForTimeout(interval);
-      await page.waitForSelector('#login-form');
+      await page.waitForSelector("#login-form");
       await page.fill('[name="email"]', user.email);
       await page.fill('[name="password"]', user.password);
-      await page.click('form >> text=Login');
+      await page.click("form >> text=Login");
       const { get } = await handle(endpoints.details(data._id));
       get(data);
 
@@ -493,30 +494,30 @@ describe('E2E tests', function () {
       own(0);
       total(5);
 
-      await page.click('nav >> text=Movies');
+      await page.click("nav >> text=Movies");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
-      await page.waitForSelector('.container');
-      const likes = await page.$$eval('.container', (t) =>
-        t.map((s) => s.textContent)
+      await page.waitForSelector(".container");
+      const likes = await page.$$eval(".container", t =>
+        t.map(s => s.textContent)
       );
-      expect(await page.isVisible('.btn >> text=Like')).to.be.false;
-      expect(likes[0]).to.contains('Liked 5');
+      expect(await page.isVisible(".btn >> text=Like")).to.be.false;
+      expect(likes[0]).to.contains("Liked 5");
     });
 
-    it('Like button should increase total likes by 1 after a click on it', async () => {
+    it("Like button should increase total likes by 1 after a click on it", async () => {
       const user = mockData.users[0];
       const data = mockData.catalog[0];
 
       await page.goto(host);
       await page.waitForTimeout(interval);
-      await page.click('text=Login');
+      await page.click("text=Login");
       await page.waitForTimeout(interval);
-      await page.waitForSelector('#login-form');
+      await page.waitForSelector("#login-form");
       await page.fill('[name="email"]', user.email);
       await page.fill('[name="password"]', user.password);
-      await page.click('form >> text=Login');
+      await page.click("form >> text=Login");
       await page.waitForTimeout(interval);
 
       const { get } = await handle(endpoints.details(data._id));
@@ -531,17 +532,17 @@ describe('E2E tests', function () {
       own(0);
       total(5);
 
-      await page.click('nav >> text=Movies');
-      await page.waitForTimeout('#movie');
+      await page.click("nav >> text=Movies");
+      await page.waitForTimeout("#movie");
       await page.click(
         `#movie > div div ul li:has-text("${data.title}") >> text=Details`
       );
-      await page.waitForSelector('.enrolled-span');
+      await page.waitForSelector(".enrolled-span");
 
-      let likes = await page.$$eval('.enrolled-span', (t) =>
-        t.map((s) => s.textContent)
+      let likes = await page.$$eval(".enrolled-span", t =>
+        t.map(s => s.textContent)
       );
-      expect(likes[0]).to.contains('Liked 5');
+      expect(likes[0]).to.contains("Liked 5");
 
       own(1);
       total(6);
@@ -551,11 +552,11 @@ describe('E2E tests', function () {
         page.click('.container >> text="Like"'),
       ]);
 
-      await page.waitForSelector('.enrolled-span');
-      likes = await page.$$eval('.enrolled-span', (t) =>
-        t.map((s) => s.textContent)
+      await page.waitForSelector(".enrolled-span");
+      likes = await page.$$eval(".enrolled-span", t =>
+        t.map(s => s.textContent)
       );
-      expect(likes[0]).to.contains('Liked 6');
+      expect(likes[0]).to.contains("Liked 6");
     });
   });
 });
@@ -565,41 +566,41 @@ async function setupContext(context) {
   await handleContext(context, endpoints.login, { post: mockData.users[0] });
   await handleContext(context, endpoints.register, { post: mockData.users[0] });
   await handleContext(context, endpoints.logout, {
-    get: (h) => h('', { json: false, status: 204 }),
+    get: h => h("", { json: false, status: 204 }),
   });
 
   // Catalog and Details
   await handleContext(context, endpoints.catalog, { get: mockData.catalog });
-  await handleContext(context, endpoints.details('1001'), {
+  await handleContext(context, endpoints.details("1001"), {
     get: mockData.catalog[0],
   });
-  await handleContext(context, endpoints.details('1002'), {
+  await handleContext(context, endpoints.details("1002"), {
     get: mockData.catalog[1],
   });
-  await handleContext(context, endpoints.details('1003'), {
+  await handleContext(context, endpoints.details("1003"), {
     get: mockData.catalog[2],
   });
 
   await handleContext(
-    endpoints.profile('0001'),
+    endpoints.profile("0001"),
     { get: mockData.catalog.slice(0, 2) },
     context
   );
 
-  await handleContext(endpoints.total('1001'), { get: 6 }, context);
-  await handleContext(endpoints.total('1002'), { get: 4 }, context);
-  await handleContext(endpoints.total('1003'), { get: 7 }, context);
+  await handleContext(endpoints.total("1001"), { get: 6 }, context);
+  await handleContext(endpoints.total("1002"), { get: 4 }, context);
+  await handleContext(endpoints.total("1003"), { get: 7 }, context);
 
-  await handleContext(endpoints.own('1001', '0001'), { get: 1 }, context);
-  await handleContext(endpoints.own('1002', '0001'), { get: 0 }, context);
-  await handleContext(endpoints.own('1003', '0001'), { get: 0 }, context);
+  await handleContext(endpoints.own("1001", "0001"), { get: 1 }, context);
+  await handleContext(endpoints.own("1002", "0001"), { get: 0 }, context);
+  await handleContext(endpoints.own("1003", "0001"), { get: 0 }, context);
 
   // Block external calls
   await context.route(
-    (url) => url.href.slice(0, host.length) != host,
-    (route) => {
+    url => url.href.slice(0, host.length) != host,
+    route => {
       if (DEBUG) {
-        console.log('Preventing external call to ' + route.request().url());
+        console.log("Preventing external call to " + route.request().url());
       }
       route.abort();
     }
@@ -617,19 +618,19 @@ function handleContext(context, match, handlers) {
 async function handleRaw(match, handlers) {
   const methodHandlers = {};
   const result = {
-    get: (returns, options) => request('GET', returns, options),
-    post: (returns, options) => request('POST', returns, options),
-    put: (returns, options) => request('PUT', returns, options),
-    patch: (returns, options) => request('PATCH', returns, options),
-    del: (returns, options) => request('DELETE', returns, options),
-    delete: (returns, options) => request('DELETE', returns, options),
+    get: (returns, options) => request("GET", returns, options),
+    post: (returns, options) => request("POST", returns, options),
+    put: (returns, options) => request("PUT", returns, options),
+    patch: (returns, options) => request("PATCH", returns, options),
+    del: (returns, options) => request("DELETE", returns, options),
+    delete: (returns, options) => request("DELETE", returns, options),
   };
 
   const context = this;
 
   await context.route(urlPredicate, (route, request) => {
     if (DEBUG) {
-      console.log('>>>', request.method(), request.url());
+      console.log(">>>", request.method(), request.url());
     }
 
     const handler = methodHandlers[request.method().toLowerCase()];
@@ -642,7 +643,7 @@ async function handleRaw(match, handlers) {
 
   if (handlers) {
     for (let method in handlers) {
-      if (typeof handlers[method] == 'function') {
+      if (typeof handlers[method] == "function") {
         handlers[method](result[method]);
       } else {
         result[method](handlers[method]);
@@ -686,10 +687,10 @@ function respond(data, options = {}) {
   );
 
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    "Access-Control-Allow-Origin": "*",
   };
   if (options.json) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
     data = JSON.stringify(data);
   }
 
