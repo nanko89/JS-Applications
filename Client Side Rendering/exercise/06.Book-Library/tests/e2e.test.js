@@ -2,7 +2,7 @@ const { chromium } = require("playwright-chromium");
 const { expect } = require("chai");
 
 const host =
-  "http://127.0.0.1:5500/Client%20Side%20Rendering/exercise/06.Book-Library/index.html"; // Application host (NOT service host - that can be anything)
+  "http://localhost:3000/Client%20Side%20Rendering/exercise/06.Book-Library/index.html"; // Application host (NOT service host - that can be anything)
 
 const interval = 300;
 const timeout = 6000;
