@@ -1,11 +1,11 @@
 export function getUserData() {
-  return JSON.parse(sessionStorage.getItem("userData"));
+  return JSON.parse(sessionStorage.getItem("user"));
 }
 
 export function setUserData(data) {
-  sessionStorage.setItem("userData", JSON.stringify(data));
+  sessionStorage.setItem("user", JSON.stringify(data));
 }
 
-export function clearUserDara() {
+export function clearUserData() {
   sessionStorage.clear();
 }
