@@ -52,7 +52,6 @@ export async function showSearch(ctx) {
   let items = [];
   const user = getUserData();
   ctx.render(searchTemplate(onSearch, items, user));
-  debugger;
   async function onSearch(e) {
     e.preventDefault();
     const search = e.target.parentElement.querySelector("#search-input");
