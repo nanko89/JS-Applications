@@ -7,28 +7,28 @@ const endpoint = {
   logout: "/users/logout",
 };
 
-export async function login(email, password) {
+export async function login(username, password) {
   const {
     _id,
-    email: reusltEmail,
+    username: reusltEmail,
     accessToken,
   } = await post(endpoint.login, {
-    email,
+    username,
     password,
   });
-  setUserData({ _id, email: reusltEmail, accessToken });
+  setUserData({ _id, username: reusltEmail, accessToken });
 }
 
-export async function register(email, password) {
+export async function register(username, password) {
   const {
     _id,
-    email: reusltEmail,
+    username: reusltEmail,
     accessToken,
   } = await post(endpoint.register, {
-    email,
+    username,
     password,
   });
-  setUserData({ _id, email: reusltEmail, accessToken });
+  setUserData({ _id, username: reusltEmail, accessToken });
 }
 
 export async function logout() {
