@@ -55,13 +55,11 @@ export async function editTeam(name, logoUrl, description) {
 }
 
 export async function addMemeberToTeam(_id, teamId) {
-  debugger;
   const result = await post(endpoints.member, { _id, teamId });
   return result;
 }
 
 export async function approveMemberShip(id, _ownerId, teamId) {
-  debugger;
   const result = await put(endpoints.memberId + id, {
     _ownerId,
     teamId,
@@ -77,7 +75,6 @@ export async function getAllTeams() {
 
 export async function getAllMyTeams(id) {
   const result = await get(endpoints.myTeams(id));
-  debugger;
   return result;
 }
 

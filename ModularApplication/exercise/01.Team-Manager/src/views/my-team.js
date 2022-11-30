@@ -44,7 +44,6 @@ export async function showMyTeams(ctx) {
 }
 
 async function showMembersOfTeam(team) {
-  debugger;
   const allMember = await getAllMemberInTeam(team._id);
   return allMember;
 }

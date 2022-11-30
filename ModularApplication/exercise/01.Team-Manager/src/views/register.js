@@ -34,7 +34,6 @@ export function showRegister(ctx) {
       return;
     }
     const validRegex = /^[\w\d.!#$%&'*+/=?^_`{|}~-]+@[\w\d]+(?:\.[\w\d]+)*$/g;
-    debugger;
     if (!email.match(validRegex)) {
       renderError("Invalid email address!");
       return;
