@@ -1,8 +1,8 @@
-import { editAlbum, getById } from "../api/data.js";
 import { html } from "../lib.js";
+import { edit, getById } from "../api/data.js";
 import { createSubmitHandler } from "../util.js";
 
-const editTemplate = (album, onEdit) => html` <section class="editPage">
+const editTemplate = (song, onEdit) => html`<section class="editPage">
   <form @submit=${onEdit}>
     <fieldset>
       <legend>Edit Album</legend>
@@ -14,7 +14,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           name="name"
           class="name"
           type="text"
-          .value=${album.name}
+          .value=${song.name}
         />
 
         <label for="imgUrl" class="vhide">Image Url</label>
@@ -23,7 +23,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           name="imgUrl"
           class="imgUrl"
           type="text"
-          .value=${album.imgUrl}
+          .value=${song.imgUrl}
         />
 
         <label for="price" class="vhide">Price</label>
@@ -32,7 +32,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           name="price"
           class="price"
           type="text"
-          .value=${album.price}
+          .value=${song.price}
         />
 
         <label for="releaseDate" class="vhide">Release date</label>
@@ -41,7 +41,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           name="releaseDate"
           class="releaseDate"
           type="text"
-          .value=${album.releaseDate}
+          .value=${song.releaseDate}
         />
 
         <label for="artist" class="vhide">Artist</label>
@@ -50,7 +50,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           name="artist"
           class="artist"
           type="text"
-          .value=${album.artist}
+          .value=${song.artist}
         />
 
         <label for="genre" class="vhide">Genre</label>
@@ -59,7 +59,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           name="genre"
           class="genre"
           type="text"
-          .value=${album.genre}
+          .value=${song.genre}
         />
 
         <label for="description" class="vhide">Description</label>
@@ -68,7 +68,7 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
           class="description"
           rows="10"
           cols="10"
-          .value=${album.description}
+          .value=${song.description}
         ></textarea>
 
         <button class="edit-album" type="submit">Edit Album</button>
@@ -78,12 +78,9 @@ const editTemplate = (album, onEdit) => html` <section class="editPage">
 </section>`;
 
 export async function showEdit(ctx) {
-  debugger;
   const id = ctx.params.id;
-  const album = await getById(id);
-  debugger;
-  ctx.render(editTemplate(album, createSubmitHandler(onEdit)));
-
+  const song = await getById(id);
+  ctx.render(editTemplate(song, createSubmitHandler(onEdit)));
   async function onEdit({
     name,
     imgUrl,
@@ -95,17 +92,17 @@ export async function showEdit(ctx) {
   }) {
     if (
       !name ||
+      !description ||
       !imgUrl ||
       !price ||
       !releaseDate ||
       !artist ||
-      !genre ||
-      !description
+      !genre
     ) {
-      return alert("All fields are require!");
+      return alert("All fields are require");
     }
 
-    await editAlbum(id, {
+    await edit(id, {
       name,
       imgUrl,
       price,
@@ -114,6 +111,6 @@ export async function showEdit(ctx) {
       genre,
       description,
     });
-    ctx.page.redirect("/catalog");
+    ctx.page.redirect("/catalog/" + id);
   }
 }

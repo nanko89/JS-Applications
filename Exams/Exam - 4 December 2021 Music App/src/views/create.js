@@ -1,6 +1,5 @@
-import { get } from "../api/api.js";
-import { createAlbum } from "../api/data.js";
 import { html } from "../lib.js";
+import { create } from "../api/data.js";
 import { createSubmitHandler } from "../util.js";
 
 const creatTemplate = onCreate => html` <section class="createPage">
@@ -88,6 +87,7 @@ export async function showCreate(ctx) {
     genre,
     description,
   }) {
+    //add fields
     if (
       !name ||
       !imgUrl ||
@@ -97,10 +97,9 @@ export async function showCreate(ctx) {
       !genre ||
       !description
     ) {
-      return alert("All fields are require!");
+      return alert("All fields are required!");
     }
-
-    await createAlbum({
+    await create({
       name,
       imgUrl,
       price,

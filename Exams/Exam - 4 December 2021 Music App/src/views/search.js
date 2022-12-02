@@ -1,26 +1,25 @@
-import { searching } from "../api/data.js";
+import { search } from "../api/data.js";
 import { html, nothing } from "../lib.js";
 import { getUserData } from "../util.js";
-
-const cartTemplate = (item, user) => html` <div class="card-box">
-  <img src="./images/BrandiCarlile.png" />
+const cardTemplate = (song, isUser) => html` <div class="card-box">
+  <img src=${song.imgUrl} />
   <div>
     <div class="text-center">
-      <p class="name">Name: ${item.name}</p>
-      <p class="artist">Artist: ${item.artist}</p>
-      <p class="genre">Genre: ${item.genre}</p>
-      <p class="price">Price: ${item.price}</p>
-      <p class="date">Release Date: ${item.releaseDate}</p>
+      <p class="name">Name: ${song.name}</p>
+      <p class="artist">Artist: ${song.artist}</p>
+      <p class="genre">Genre: ${song.genre}</p>
+      <p class="price">Price: $${song.price}</p>
+      <p class="date">Release Date: ${song.releaseDate}</p>
     </div>
-    ${user
-      ? html`<div class="btn-group">
-          <a href="/catalog/${item._id}" id="details">Details</a>
+    ${isUser
+      ? html` <div class="btn-group">
+          <a href="/catalog/${song._id}" id="details">Details</a>
         </div>`
       : nothing}
   </div>
 </div>`;
 
-const searchTemplate = (onSearch, items, user) => html` <section
+const searchTemplate = (onSearch, songs, isUser) => html`<section
   id="searchPage"
 >
   <h1>Search by Name</h1>
@@ -37,30 +36,26 @@ const searchTemplate = (onSearch, items, user) => html` <section
 
   <h2>Results:</h2>
 
-  <!--Show after click Search button-->
-
-  ${items.length == 0
-    ? html`<div class="search-result">
-        <p class="no-result">No result.</p>
-      </div>`
-    : html`<div class="search-result">
-        ${items.map(i => cartTemplate(i, user))}
-      </div>`}
+  <div class="search-result">
+    ${songs.length == 0
+      ? html`<p class="no-result">No result.</p>`
+      : html`${songs.map(s => cardTemplate(s, isUser))}`}
+  </div>
 </section>`;
 
 export async function showSearch(ctx) {
-  let items = [];
-  const user = getUserData();
-  ctx.render(searchTemplate(onSearch, items, user));
+  const user = await getUserData();
+  const isUser = user ? true : false;
+  let songs = [];
+  ctx.render(searchTemplate(onSearch, songs, isUser));
+
   async function onSearch(e) {
     e.preventDefault();
-    const search = e.target.parentElement.querySelector("#search-input");
-    if (!search.value) {
-      return alert("The data entered is empty!");
+    const input = document.querySelector("#search-input");
+    if (!input.value) {
+      return alert("Invalid input!");
     }
-
-    items = await searching(search.value);
-    ctx.render(searchTemplate(onSearch, items, user));
-    search.value = "";
+    songs = await search(input.value);
+    ctx.render(searchTemplate(onSearch, songs, isUser));
   }
 }

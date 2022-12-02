@@ -47,7 +47,6 @@ export function showRegister(ctx) {
   ctx.render(registerTemplate(createSubmitHandler(onRegister)));
 
   async function onRegister({ email, password, "conf-pass": repeatPassword }) {
-    debugger;
     if (!email || !password || !repeatPassword) {
       return alert("All field are require!");
     }

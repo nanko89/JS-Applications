@@ -19,7 +19,7 @@ page("/create", showCreate);
 page("/catalog", showCatalog);
 page("/catalog/:id", showDetails);
 page("/edit/:id", showEdit);
-page("/search", showSearch);
+page('/search', showSearch)
 
 updateNav();
 page.start();
