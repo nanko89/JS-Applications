@@ -8,27 +8,16 @@ const endpoint = {
 };
 
 export async function login(email, password) {
-  const {
-    _id,
-    email: reusltEmail,
-    accessToken,
-  } = await post(endpoint.login, {
-    email,
-    password,
-  });
-  setUserData({ _id, email: reusltEmail, accessToken });
+  const user = await post(endpoint.login, { email, password });
+  setUserData(user);
 }
 
 export async function register(email, password) {
-  const {
-    _id,
-    email: reusltEmail,
-    accessToken,
-  } = await post(endpoint.register, {
+  const user = await post(endpoint.register, {
     email,
     password,
   });
-  setUserData({ _id, email: reusltEmail, accessToken });
+  setUserData(user);
 }
 
 export async function logout() {

@@ -44,7 +44,9 @@ export function showLogin(ctx) {
     if (!email || !password) {
       return alert("All fields are required!");
     }
+
     await login(email, password);
+
     ctx.updateNav();
     ctx.page.redirect("/");
   }

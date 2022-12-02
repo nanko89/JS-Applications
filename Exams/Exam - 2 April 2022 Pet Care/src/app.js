@@ -1,5 +1,4 @@
 import { page, render } from "./lib.js";
-import { getUserData } from "./util.js";
 import { showCatalog } from "./views/catalog.js";
 import { showCreate } from "./views/create.js";
 import { showDetails } from "./views/details.js";
@@ -26,12 +25,6 @@ page.start();
 function decorateContext(ctx, next) {
   ctx.render = renderMain;
   ctx.updateNav = updateNav;
-
-  const user = getUserData();
-  if (user) {
-    ctx.user = user;
-  }
-
   next();
 }
 

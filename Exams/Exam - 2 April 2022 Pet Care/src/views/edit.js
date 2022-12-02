@@ -1,10 +1,10 @@
-import { editPet, getById } from "../api/data.js";
 import { html } from "../lib.js";
+import { edit, getById } from "../api/data.js";
 import { createSubmitHandler } from "../util.js";
 
-const editTemplate = (onEdit, pet) => html` <section id="editPage">
+const editTemplate = (pet, onEdit) => html` <section id="editPage">
   <form @submit=${onEdit} class="editForm">
-    <img src="${pet.image}" />
+    <img src="./images/editpage-dog.jpg" />
     <div>
       <h2>Edit PetPal</h2>
       <div class="name">
@@ -35,15 +35,13 @@ const editTemplate = (onEdit, pet) => html` <section id="editPage">
 export async function showEdit(ctx) {
   const id = ctx.params.id;
   const pet = await getById(id);
-  ctx.render(editTemplate(createSubmitHandler(onEdit), pet));
-
+  ctx.render(editTemplate(pet, createSubmitHandler(onEdit)));
   async function onEdit({ name, breed, age, weight, image }) {
     if (!name || !breed || !age || !weight || !image) {
-      return alert("All fieald are required!");
+      return alert("All fields are require");
     }
 
-    await editPet(id, { name, breed, age, weight, image });
-
-    ctx.page.redirect("/catalog/" + id);
+    await edit(id, { name, breed, age, weight, image });
+    ctx.page.redirect("/catalog");
   }
 }

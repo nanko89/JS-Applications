@@ -1,5 +1,5 @@
-import { createPet } from "../api/data.js";
 import { html } from "../lib.js";
+import { create } from "../api/data.js";
 import { createSubmitHandler } from "../util.js";
 
 const creatTemplate = onCreate => html` <section id="createPage">
@@ -37,17 +37,14 @@ const creatTemplate = onCreate => html` <section id="createPage">
   </form>
 </section>`;
 
-export function showCreate(ctx) {
+export async function showCreate(ctx) {
   ctx.render(creatTemplate(createSubmitHandler(onCreate)));
 
   async function onCreate({ name, breed, age, weight, image }) {
-    debugger;
     if (!name || !breed || !age || !weight || !image) {
-      return alert("All fieald are required!");
+      return alert("All fields are required!");
     }
-
-    await createPet({ name, breed, age, weight, image });
-
+    await create({ name, breed, age, weight, image });
     ctx.page.redirect("/");
   }
 }
