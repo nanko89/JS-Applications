@@ -240,7 +240,7 @@ describe("E2E tests", function () {
     });
   });
 
-  describe("CRUD", () => {
+  describe.only("CRUD", () => {
     // Login user
     const loginUser = async () => {
       const data = mockData.users[0];
